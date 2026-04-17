@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LazaStore - Mua Sắm Hàng Hiệu</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --dark: #0f172a;
+            --light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: #334155;
+        }
+
+        /* Navbar Xịn */
+        .navbar {
+            background-color: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--primary) !important;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #475569;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+            color: white;
+        }
+
+        /* Hero Banner */
+        .hero {
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1920') no-repeat center center/cover;
+            color: white;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        /* Product Grid */
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            border: none;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-card img {
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ef4444;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Profile Dropdown logic */
+        #auth-section { display: flex; gap: 10px; align-items: center; }
+        .user-dropdown { display: none; }
+        
+        /* Modal Glassmorphism */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        #notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class='bx bxs-shopping-bag'></i> LazaStore</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-link">Trang chủ</li>
+                    <li class="nav-link mx-3">Nam</li>
+                    <li class="nav-link mx-3">Nữ</li>
+                    <li class="nav-link mx-3"><a href="manager.html" style="text-decoration:none; color:inherit;">Kênh Cửa Hàng (MANAGER)</a></li>
+                    
+                    <li class="nav-item ms-4" id="auth-section">
+                        <!-- Nút Khách -->
+                        <button class="btn btn-outline-secondary rounded-pill fw-bold" onclick="showModal('registerModal')">Đăng Ký</button>
+                        <button class="btn btn-primary-custom" onclick="showModal('loginModal')">Đăng Nhập</button>
+                    </li>
+                    
+                    <li class="nav-item dropdown ms-4 user-dropdown" id="user-section">
+                        <a class="nav-link dropdown-toggle fw-bold text-dark d-flex align-items-center gap-2" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=User&background=2563eb&color=fff" class="rounded-circle" width="35" id="user-avatar">
+                            <span id="user-name">Khách Hàng</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:15px">
+                            <li><a class="dropdown-item" href="userprofile.html"><i class='bx bx-user'></i> Hồ sơ cá nhân</a></li>
+                            <li><a class="dropdown-item" href="#"><i class='bx bx-shopping-bag'></i> Đơn hàng của tôi</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger fw-bold" href="admin.html"><i class='bx bx-shield-quarter'></i> Trang Admin (Quyền ADMIN)</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i class='bx bx-log-out'></i> Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Bộ Sưu Tập Mùa Hè 2026</h1>
+            <p class="lead mb-4 mx-auto" style="max-width:600px; font-weight:300;">Trải nghiệm mua sắm xa xỉ với các thương hiệu hàng đầu. Mọi thao tác truy cập dữ liệu đều được bảo mật tuyệt đối qua JWT Auth.</p>
+            <button class="btn btn-primary-custom btn-lg px-5 py-3 fs-5">Khám Phá Ngay <i class='bx bx-right-arrow-alt'></i></button>
+        </div>
+    </header>
+
+    <!-- Products Section (Mock UI) -->
+    <section class="py-5 bg-light">
+        <div class="container py-4">
+            <h2 class="fw-bold mb-4">Sản Phẩm Nổi Bật</h2>
+            <div class="row g-4">
+                <!-- SP 1 -->
+                <div class="col-md-3">
+                    <div class="card product-card position-relative">
+                        <span class="product-badge">New</span>
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=600" class="card-img-top" alt="Nike Red">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Nike Air Force 1 Red</h5>
+                            <p class="text-muted small">Sneaker Nam</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price">4.500.000 ₫</span>
+                                <button class="btn btn-dark rounded-circle" style="width:40px; height:40px" onclick="addToCart()"><i class='bx bx-cart-add'></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- SP 2 -->
+                <div class="col-md-3">
+                    <div class="card product-card">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600" class="card-img-top" alt="Headphone">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Sony WH-1000XM5</h5>
+                            <p class="text-muted small">Tai nghe chụp tai</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price">8.990.000 ₫</span>
+                                <button class="btn btn-dark rounded-circle" style="width:40px; height:40px" onclick="addToCart()"><i class='bx bx-cart-add'></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- SP 3 -->
+                <div class="col-md-3">
+                    <div class="card product-card position-relative">
+                         <span class="product-badge" style="background:#2563eb">-20%</span>
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600" class="card-img-top" alt="Watch">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Apple Watch SE</h5>
+                            <p class="text-muted small">Đồng hồ thông minh</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price">6.990.000 ₫</span>
+                                <button class="btn btn-dark rounded-circle" style="width:40px; height:40px" onclick="addToCart()"><i class='bx bx-cart-add'></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- SP 4 -->
+                <div class="col-md-3">
+                    <div class="card product-card">
+                        <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&q=80&w=600" class="card-img-top" alt="Camera">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Polaroid Camera</h5>
+                            <p class="text-muted small">Máy ảnh lấy liền</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price">3.200.000 ₫</span>
+                                <button class="btn btn-dark rounded-circle" style="width:40px; height:40px" onclick="addToCart()"><i class='bx bx-cart-add'></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-3">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold fs-4">Đăng Nhập LazaStore</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted small">TÀI KHOẢN</label>
+                        <input type="text" id="l-username" class="form-control" placeholder="Tên đăng nhập" value="admin">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted small">MẬT KHẨU</label>
+                        <input type="password" id="l-password" class="form-control" placeholder="••••••••" value="123456">
+                    </div>
+                    <button class="btn btn-primary-custom w-100 py-3" onclick="doLogin()">Tiếp Tục Mua Sắm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Register -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-3">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold fs-4">Tạo Tài Khoản Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <div class="col-12">
+                        <input type="text" id="r-username" class="form-control" placeholder="Tên đăng nhập (TD: khang123)">
+                    </div>
+                    <div class="col-12">
+                        <input type="password" id="r-password" class="form-control" placeholder="Mật khẩu (> 6 ký tự)">
+                    </div>
+                    <div class="col-12">
+                        <input type="text" id="r-fullName" class="form-control" placeholder="Họ và tên của bạn">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="email" id="r-email" class="form-control" placeholder="Email liên hệ">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id="r-phone" class="form-control" placeholder="Số điện thoại">
+                    </div>
+                    <div class="col-12 mt-4">
+                        <button class="btn btn-primary-custom w-100 py-3" onclick="doRegister()">Tạo Tài Khoản</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts (Thông báo) -->
+    <div class="toast-container p-3" id="notification-toast"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Init UI based on LocalStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('accessToken');
+            const fullName = localStorage.getItem('fullName');
+            if (token && fullName) {
+                updateUI_LoggedIn(fullName);
+            }
+        });
+
+        function showModal(modalId) {
+            var myModal = new bootstrap.Modal(document.getElementById(modalId));
+            myModal.show();
+        }
+        function hideModal(modalId) {
+            var myModalEl = document.getElementById(modalId);
+            var modal = bootstrap.Modal.getInstance(myModalEl);
+            if(modal) modal.hide();
+        }
+
+        // Show Toast Notification
+        function notify(title, message, type='success') {
+            const toastContainer = document.getElementById('notification-toast');
+            const bgClass = type === 'success' ? 'bg-success' : (type === 'error' ? 'bg-danger' : 'bg-warning text-dark');
+            const textClass = type === 'warning' ? '' : 'text-white';
+            
+            const toastHTML = `
+                <div class="toast show align-items-center ${textClass} ${bgClass} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                  <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                      <i class='bx bx-bell'></i> [${title}] ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+                </div>
+            `;
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const currentToastList = document.querySelectorAll('.toast');
+            const activeToast = currentToastList[currentToastList.length - 1];
+            setTimeout(() => { activeToast.remove(); }, 4000);
+        }
+
+        // Handle UI state
+        function updateUI_LoggedIn(fullName) {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('user-section').style.display = 'flex';
+            document.getElementById('user-name').innerText = 'Hi, ' + fullName;
+            document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${fullName}&background=2563eb&color=fff&bold=true`;
+        }
+
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('fullName');
+            localStorage.removeItem('roles');
+            
+            document.getElementById('auth-section').style.display = 'flex';
+            document.getElementById('user-section').style.display = 'none';
+            notify("Đăng xuất", "Đã rời khỏi LazaStore an toàn.", "success");
+        }
+
+        function addToCart() {
+            const token = localStorage.getItem('accessToken');
+            if(!token) {
+                notify("Từ chối", "Vui lòng Đăng Nhập để Thêm vào giỏ hàng!", "warning");
+                showModal('loginModal');
+                return;
+            }
+            notify("Giỏ hàng", "Đã thêm sản phẩm vào giỏ hàng của bạn!", "success");
+        }
+
+        // --- API Integration ---
+        async function doLogin() {
+            const username = document.getElementById('l-username').value;
+            const password = document.getElementById('l-password').value;
+            
+            try {
+                const res = await fetch('/api/v1/auth/sign-in', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    // Logic xác thực kinh điển: Lưu token vào LocalStorage
+                    localStorage.setItem('accessToken', data.data.token);
+                    localStorage.setItem('fullName', data.data.fullName);
+                    localStorage.setItem('roles', JSON.stringify(data.data.roles));
+                    
+                    hideModal('loginModal');
+                    updateUI_LoggedIn(data.data.fullName);
+                    notify("Thành công", `Chào mừng anh/chị ${data.data.fullName} đăng nhập LazaStore!`);
+                } else {
+                    notify("Thất bại", data.message || "Sai tài khoản hoặc mật khẩu", "error");
+                }
+            } catch (error) {
+                notify("Tuyệt đối", "Lỗi mất kết nối mạng lưới máy chủ.", "error");
+            }
+        }
+
+        async function doRegister() {
+            const payload = {
+                username: document.getElementById('r-username').value,
+                password: document.getElementById('r-password').value,
+                fullName: document.getElementById('r-fullName').value,
+                email: document.getElementById('r-email').value,
+                phone: document.getElementById('r-phone').value
+            };
+            
+            try {
+                const res = await fetch('/api/v1/auth/sign-up', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if (res.ok || res.status === 201) {
+                    hideModal('registerModal');
+                    notify("Đăng ký thành công", "Tài khoản đã tạo. Bạn có thể đăng nhập ngay!", "success");
+                    showModal('loginModal');
+                } else {
+                    notify("Khai báo lỗi", data.message || "Dữ liệu không hợp lệ", "error");
+                }
+            } catch (e) {
+                notify("Lỗi 500", "Lỗi phía máy chủ.", "error");
+            }
+        }
+
+        // Test Endpoint có nhúng sẵn cơ chế bắt lỗi Token
+        async function callApi(endpoint, tenHanhDong) {
+            const token = localStorage.getItem('accessToken');
+            const headers = { 'Content-Type': 'application/json' };
+            
+            if (token) headers['Authorization'] = 'Bearer ' + token;
+
+            try {
+                const response = await fetch(endpoint, { method: 'GET', headers: headers });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Cố tình log payload response để biểu diễn
+                    console.log(`Payload GET ${endpoint}:`, data);
+                    notify("Quyền hợp lệ", `Bạn có quyền truy cập: ${tenHanhDong}`, "success");
+                    alert("Kết quả tải từ Máy chủ Backend (Chỉ người có quyền xem được):\n\n" + JSON.stringify(data, null, 2));
+                } else {
+                    // Logic xử lý kịch bản Access Token hết hạn 5 phút hoặc Chưa đăng nhập  
+                    if (response.status === 401) {
+                         notify("Hết Phiên Đăng Nhập", "Access Token không có hoặc đã Hết Hạn (5 phút). Vui lòng Đăng Nhập lại!", "error");
+                         logout(); // Mất token thì clear state
+                         showModal('loginModal');
+                    } 
+                    // Chặn chức năng quyền hạn cao (VD: khách đi vào Admin)
+                    else if (response.status === 403) {
+                         notify("Cấm", `Tài khoản của bạn thiếu Authority để vào: ${tenHanhDong}`, "error");
+                    } else {
+                         notify("Lỗi", "Thao tác thất bại ("+response.status+")", "error");
+                    }
+                }
+            } catch(e) {
+                notify("Chết máy chủ", "Mạng lưới bảo trì", "error");
+            }
+        }
+    </script>
+</body>
+</html>

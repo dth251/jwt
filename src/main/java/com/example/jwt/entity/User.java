@@ -3,6 +3,7 @@ package com.example.jwt.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ public class User {
     @Column(name = "phone", unique = true, length = 20)
     private String phone;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Cá Nhân - LazaStore</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Xịn */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--primary) !important;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #475569;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        /* Glassmorphism Profile Container */
+        .profile-container {
+            margin-top: 100px;
+            margin-bottom: 50px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Profile Header */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+            object-fit: cover;
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #10b981;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            background: white;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .role-badge {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+        
+        /* Error Overlay */
+        #error-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.95); z-index:9999; justify-content:center; align-items:center; flex-direction:column; color:white; }
+        .btn-custom { background:var(--primary); color:white; border:none; padding:12px 28px; border-radius:999px; text-decoration:none; margin-top:20px; font-weight:bold; transition: transform 0.2s, box-shadow 0.2s; }
+        .btn-custom:hover { background:var(--primary-hover); color:white; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4); }
+
+        /* Loader */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(37, 99, 235, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class='bx bxs-shopping-bag'></i> LazaStore</a>
+            <div class="ms-auto">
+                <a href="index.html" class="btn btn-outline-secondary rounded-pill fw-bold"><i class='bx bx-left-arrow-alt'></i> Quay lại mua sắm</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Error/Unauth Overlay -->
+    <div id="error-overlay">
+        <i class='bx bxs-lock-alt' style="font-size: 100px; color: #ef4444; filter: drop-shadow(0 0 20px rgba(239,68,68,0.5));"></i>
+        <h2 class="mt-4 fw-bold" id="error-title">YÊU CẦU ĐĂNG NHẬP</h2>
+        <p class="text-white-50 fs-5 mt-2 text-center" style="max-width: 500px;" id="error-desc">Phiên đăng nhập của bạn đã hết hạn hoặc bạn chưa đăng nhập. Vui lòng đăng nhập lại để xem hồ sơ cá nhân.</p>
+        <a href="index.html" class="btn-custom"><i class='bx bx-log-in-circle'></i> Về trang chủ đăng nhập</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="profile-container" id="profile-content" style="display: none;">
+                    
+                    <div class="profile-header">
+                        <div class="avatar-container">
+                            <img src="" alt="User Avatar" class="avatar-img" id="pf-avatar">
+                            <div class="status-badge" title="Đang trực tuyến"></div>
+                        </div>
+                        <div>
+                            <h1 class="profile-title" id="pf-fullname">Đang tải...</h1>
+                            <p class="profile-subtitle">Tài khoản @<span id="pf-username">...</span></p>
+                            <div id="pf-roles-container">
+                                <!-- Roles inserted here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="icon-box"><i class='bx bx-envelope'></i></div>
+                                <div>
+                                    <div class="info-label">Địa chỉ Email</div>
+                                    <div class="info-value" id="pf-email">--</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="icon-box"><i class='bx bx-phone'></i></div>
+                                <div>
+                                    <div class="info-label">Số điện thoại</div>
+                                    <div class="info-value" id="pf-phone">--</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="icon-box"><i class='bx bx-id-card'></i></div>
+                                <div>
+                                    <div class="info-label">Mã thẻ thành viên</div>
+                                    <div class="info-value text-primary">#<span id="pf-id">--</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="icon-box"><i class='bx bx-check-shield'></i></div>
+                                <div>
+                                    <div class="info-label">Trạng thái xác thực</div>
+                                    <div class="info-value text-success"><i class='bx bxs-check-circle'></i> Đã bảo vệ bằng JWT</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Loader -->
+                <div class="loader-container" id="loader">
+                    <div class="spinner"></div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('accessToken');
+            if(!token) {
+                showError("YÊU CẦU ĐĂNG NHẬP", "Bạn chưa đăng nhập. Vui lòng đăng nhập để xem thông tin hồ sơ.");
+                return;
+            }
+            fetchUserProfile(token);
+        });
+
+        async function fetchUserProfile(token) {
+            try {
+                const response = await fetch('/api/v1/user/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const jsonResp = await response.json();
+                    renderProfile(jsonResp.data);
+                } else if (response.status === 401 || response.status === 403) {
+                    // Token expired or invalid
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('fullName');
+                    localStorage.removeItem('roles');
+                    showError("PHIÊN ĐÃ HẾT HẠN", "Token JWT của bạn đã hết hạn (sau 5 phút) hoặc không hợp lệ. Vui lòng đăng nhập lại.");
+                } else {
+                    showError("LỖI MÁY CHỦ", "Đã xảy ra lỗi khi lấy thông tin. Mã lỗi: " + response.status);
+                }
+            } catch (error) {
+                console.error("Fetch Profile Error:", error);
+                showError("MẤT KẾT NỐI", "Không thể kết nối đến máy chủ Backend.");
+            }
+        }
+
+        function renderProfile(user) {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('profile-content').style.display = 'block';
+
+            // Gán dữ liệu
+            const fullName = user.fullName || "Người Tên Ẩn Danh";
+            document.getElementById('pf-fullname').innerText = fullName;
+            document.getElementById('pf-username').innerText = user.username || "--";
+            document.getElementById('pf-email').innerText = user.email || "Chưa cập nhật";
+            document.getElementById('pf-phone').innerText = user.phone || "Chưa cập nhật";
+            document.getElementById('pf-id').innerText = user.id || "--";
+
+            // Tạo Avatar xịn
+            document.getElementById('pf-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=2563eb&color=fff&size=200&font-size=0.33&bold=true`;
+
+            // Xử lý Roles
+            const rolesContainer = document.getElementById('pf-roles-container');
+            rolesContainer.innerHTML = '';
+            if (user.roleSet && user.roleSet.length > 0) {
+                user.roleSet.forEach(r => {
+                    const roleName = r.roleName || r.name || r;
+                    const roleStr = typeof roleName === 'string' ? roleName : JSON.stringify(roleName);
+                    
+                    let bg = "linear-gradient(135deg, #3b82f6, #2563eb)"; // Default USER
+                    if (roleStr.includes("ADMIN")) bg = "linear-gradient(135deg, #ef4444, #dc2626)";
+                    else if (roleStr.includes("MANAGER")) bg = "linear-gradient(135deg, #10b981, #059669)";
+
+                    const span = document.createElement('span');
+                    span.className = "role-badge";
+                    span.style.background = bg;
+                    span.innerHTML = `<i class='bx bxs-badge-check'></i> Quản trị: ${roleStr}`;
+                    rolesContainer.appendChild(span);
+                });
+            } else {
+                rolesContainer.innerHTML = `<span class="role-badge" style="background: #94a3b8"><i class='bx bx-user'></i> Thành viên</span>`;
+            }
+        }
+
+        function showError(title, desc) {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('profile-content').style.display = 'none';
+            
+            document.getElementById('error-overlay').style.display = 'flex';
+            document.getElementById('error-title').innerText = title;
+            document.getElementById('error-desc').innerText = desc;
+        }
+    </script>
+</body>
+</html>

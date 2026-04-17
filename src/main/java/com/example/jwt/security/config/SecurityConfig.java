@@ -87,6 +87,9 @@ public class SecurityConfig {
                     // Public endpoints – đăng ký, đăng nhập
                     .requestMatchers("/api/v1/auth/**").permitAll()
 
+                    // Cho phép truy cập file tĩnh (HTML web)
+                    .requestMatchers("/*.html").permitAll()
+
                     // Chỉ ADMIN mới được truy cập
                     .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
 
@@ -96,8 +99,8 @@ public class SecurityConfig {
                     // USER hoặc MANAGER
                     .requestMatchers("/api/v1/user-manager/**").hasAnyAuthority("USER", "MANAGER")
 
-                    // USER đã đăng nhập
-                    .requestMatchers("/api/v1/user/**").hasAuthority("USER")
+                    // USER, ADMIN hoặc MANAGER đã đăng nhập
+                    .requestMatchers("/api/v1/user/**").hasAnyAuthority("USER", "ADMIN", "MANAGER")
 
                     // Tất cả các request khác phải được xác thực
                     .anyRequest().authenticated()
